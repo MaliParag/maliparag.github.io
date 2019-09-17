@@ -2,9 +2,42 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title> - Articles</title>
-    <description>The professional publishing platform</description>
+    <description>Parag Mali</description>
     <link>
     http://localhost:4000</link>
+    
+      
+      <item>
+        <title>Bounding Box Regression</title>
+        
+          <description>&lt;!DOCTYPE html&gt;
+&lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;&quot; xml:lang=&quot;&quot;&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot; /&gt;
+  &lt;meta name=&quot;generator&quot; content=&quot;pandoc&quot; /&gt;
+  &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0, user-scalable=yes&quot; /&gt;
+  &lt;title&gt;This post explains the loss function used in the SSD object detection.&lt;/title&gt;
+  &lt;style&gt;
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  &lt;/style&gt;
+  &lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full&quot; type=&quot;text/javascript&quot;&gt;&lt;/script&gt;
+  &lt;!--[if lt IE 9]&gt;
+    &lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js&quot;&gt;&lt;/script&gt;
+  &lt;![endif]--&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+</description>
+        
+        <pubDate>Sun, 15 Sep 2019 21:16:00 -0700</pubDate>
+        <link>
+        http://localhost:4000/bounding-box-regression</link>
+        <guid isPermaLink="true">http://localhost:4000/bounding-box-regression</guid>
+      </item>
+      
     
   </channel>
 </rss>

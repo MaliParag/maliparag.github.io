@@ -1,4 +1,45 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-09-16T16:59:58-07:00</updated><id>http://localhost:4000/</id><title type="html">Parag Mali</title><subtitle>Parag Mali</subtitle><entry><title type="html">Bounding Box Regression</title><link href="http://localhost:4000/bounding-box-regression" rel="alternate" type="text/html" title="Bounding Box Regression" /><published>2019-09-15T21:16:00-07:00</published><updated>2019-09-15T21:16:00-07:00</updated><id>http://localhost:4000/bounding-box-regression</id><content type="html" xml:base="http://localhost:4000/bounding-box-regression">&lt;!DOCTYPE html&gt;
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.7.4">Jekyll</generator>
+  <link href="http://localhost:4000/tag/object-detection/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="http://localhost:4000/" rel="alternate" type="text/html" />
+  <updated>2019-09-16T16:59:58-07:00</updated>
+  <id>http://localhost:4000/tag/object-detection/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Parag Mali | </title>
+  
+
+  
+    <subtitle>Parag Mali</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">Bounding Box Regression</title>
+      <link href="http://localhost:4000/bounding-box-regression" rel="alternate" type="text/html" title="Bounding Box Regression" />
+      <published>2019-09-15T21:16:00-07:00</published>
+      <updated>2019-09-15T21:16:00-07:00</updated>
+      <id>http://localhost:4000/bounding-box-regression</id>
+      <content type="html" xml:base="http://localhost:4000/bounding-box-regression">&lt;!DOCTYPE html&gt;
 &lt;html xmlns=&quot;http://www.w3.org/1999/xhtml&quot; lang=&quot;&quot; xml:lang=&quot;&quot;&gt;
 &lt;head&gt;
   &lt;meta charset=&quot;utf-8&quot; /&gt;
@@ -71,4 +112,32 @@
     &lt;div id=&quot;ref-ErhanSTA13&quot;&gt;
     &lt;p&gt;Erhan, Dumitru, Christian Szegedy, Alexander Toshev, and Dragomir Anguelov. 2013. “Scalable Object Detection Using Deep Neural Networks.” &lt;em&gt;CoRR&lt;/em&gt; abs/1312.2249. &lt;a href=&quot;http://arxiv.org/abs/1312.2249&quot;&gt;http://arxiv.org/abs/1312.2249&lt;/a&gt;.&lt;/p&gt;
     &lt;/div&gt;
-&lt;/body&gt;</content><author><name>Parag Mali</name></author><category term="Object Detection" /><summary type="html">This post explains the loss function used in the SSD object detection.</summary></entry></feed>
+&lt;/body&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Parag Mali</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="Object Detection" />
+      
+
+      
+        <summary type="html">This post explains the loss function used in the SSD object detection.</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

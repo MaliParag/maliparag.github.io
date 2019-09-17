@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Bounding Box Regression</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Parag Mali" />
+    <link rel="shortcut icon" href="http://localhost:4000/assets/images/logo/vector/isolated-monochrome-black.svg" type="image/png" />
+    <link rel="canonical" href="http://localhost:4000/bounding-box-regression" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Parag Mali" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Bounding Box Regression" />
+    <meta property="og:description" content="This post explains the loss function used in the SSD object detection. In this post, let us understand the loss function used by Liu et al. in the SSD paper (Liu et al. 2016). Let \(x_{ij}^{p} = \{1, 0\}\) be an indicator for matching the \(i^{th}\) default box to the" />
+    <meta property="og:url" content="http://localhost:4000/bounding-box-regression" />
+    <meta property="og:image" content="http://localhost:4000/assets/images/logo/cover.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/prgml" />
+    <meta property="article:author" content="https://www.facebook.com/prgml" />
+    <meta property="article:published_time" content="2019-09-15T21:16:00-07:00" />
+    <meta property="article:modified_time" content="2019-09-15T21:16:00-07:00" />
+    <meta property="article:tag" content="Object Detection" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Bounding Box Regression" />
+    <meta name="twitter:description" content="This post explains the loss function used in the SSD object detection. In this post, let us understand the loss function used by Liu et al. in the SSD paper (Liu et al. 2016). Let \(x_{ij}^{p} = \{1, 0\}\) be an indicator for matching the \(i^{th}\) default box to the" />
+    <meta name="twitter:url" content="http://localhost:4000/" />
+    <meta name="twitter:image" content="http://localhost:4000/assets/images/logo/cover.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Parag Mali" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Object Detection" />
+    <meta name="twitter:site" content="@paragmali" />
+    <meta name="twitter:creator" content="@paragmali" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Parag Mali",
+        "logo": "http://localhost:4000/assets/images/logo/profile.png"
+    },
+    "url": "http://localhost:4000/bounding-box-regression",
+    "image": {
+        "@type": "ImageObject",
+        "url": "http://localhost:4000/assets/images/logo/cover.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "http://localhost:4000/bounding-box-regression"
+    },
+    "description": "This post explains the loss function used in the SSD object detection. In this post, let us understand the loss function used by Liu et al. in the SSD paper (Liu et al. 2016). Let \(x_{ij}^{p} = \{1, 0\}\) be an indicator for matching the \(i^{th}\) default box to the"
+}
+    </script>
+
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Bounding Box Regression" href="/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="http://localhost:4000/"><img src="/assets/images/logo/profile.png" alt="Parag Mali" /></a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <!--li class="nav-getting-started" role="menuitem"><a href="/tag/getting-started/">Getting Started</a></li-->
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+                <a class="social-link social-link-fb" href="https://facebook.com/prgml" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+</a>
+            
+            
+                <a class="social-link social-link-tw" href="https://twitter.com/paragmali" target="_blank" rel="noopener"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+</a>
+            
+        </div>
+        
+            <a class="subscribe-button" href="#subscribe">Subscribe</a>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full post tag-getting-started no-image">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="15 September 2019">15 September 2019</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/object-detection/'>OBJECT DETECTION</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Bounding Box Regression</h1>
+            </header>
+
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>This post explains the loss function used in the SSD object detection.</title>
+  <style>
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+
+<p>In this post, let us understand the loss function used by Liu et al. in the SSD paper <span class="citation" data-cites="liu2016ssd">(Liu et al. 2016)</span>. Let <span class="math inline">\(x_{ij}^{p} = \{1, 0\}\)</span> be an indicator for matching the <span class="math inline">\(i^{th}\)</span> default box to the <span class="math inline">\(j^{th}\)</span> ground truth box of category <span class="math inline">\(p\)</span>. In the matching strategy used in the model, we can have <span class="math inline">\(\sum_{i}x_{ij}^{p} \ge 1\)</span>. It means that more than one default box can match one ground truth box. The overall loss is a weighted sum of localization loss and confidence loss. Next, we describe the bounding box regression problem and the localization loss.</p>
+
+<amp-auto-ads type="adsense" data-ad-client="ca-pub-7615441328920742">
+</amp-auto-ads>
+
+<h2 id="bounding-box-regression">Bounding Box Regression</h2>
+<p>Let us define the predicted box <span class="math inline">\(l\)</span> as <span class="math inline">\(l = \{l^{cx}, l^{cy}, l^{w}, l^{h}\}\)</span>, where superscript (<span class="math inline">\(cx\)</span>, <span class="math inline">\(cy\)</span>) is the x and y co-ordinate of the center of the box, <span class="math inline">\(w\)</span> is the width, and, <span class="math inline">\(h\)</span> is the height. Similarly, the ground truth bounding box <span class="math inline">\(g\)</span> can be defined as <span class="math inline">\(l = \{l^{cx}, l^{cy}, l^{w}, l^{h}\}\)</span>. We configure the bounding box regressor to learn four functions, <span class="math inline">\(f_{cx}, f_{cy}\)</span> for scale-invariant transformation between centers of <span class="math inline">\(l\)</span> and <span class="math inline">\(g\)</span> and <span class="math inline">\(f_w, f_h\)</span> for log-scale transformation between widths and heights. In general, we define <span class="math inline">\(f_i\)</span>, where <span class="math inline">\(i \in \{cx,cy,w,h\}\)</span> as a bounding box correction function. <span class="math inline">\(f_i\)</span> takes <span class="math inline">\(l\)</span> as the input. The target values <span class="math inline">\(\hat{g}\)</span> for bounding box correction functions <span class="math inline">\(f_i\)</span> are defined below:</p>
+<p><span class="math display">\[\begin{split}
+                \hat{g}^{cx}_j &amp;= (g^{cx}_j - d^{cx}_i)/d_i^{w}\\
+                \hat{g}^{cy}_j &amp;= (g^{cy}_j - d^{cy}_i)/d_i^{h}\\
+                \hat{g}^w_j &amp;= \log(\frac{g^w_j}{d^w_i})\\
+                \hat{g}^h_j &amp;= \log(\frac{g^h_j}{d^h_i})
+            \end{split}\]</span></p>
+<p>We use <span class="math inline">\(smooth_{L1}\)</span> loss defined by Girshick<span class="citation" data-cites="girshick2015fast">(Girshick 2015)</span> for the bounding box regression problem. It is given by Equation <a href="#eq:smooth_l1" data-reference-type="ref" data-reference="eq:smooth_l1">[eq:smooth_l1]</a>. It is claimed to be less sensitive to outliers.</p>
+<p><span class="math display">\[smooth_{L1}(t) = 
+            \begin{cases}
+            0.5t^2,&amp; \text{if} \mid{t}\mid&lt;1;\\
+            \mid{t}\mid-0.5,&amp; \text{otherwise}
+            \end{cases}
+            \label{eq:smooth_l1}\]</span></p>
+<h2 id="localization-loss">Localization Loss</h2>
+<p>The localization loss is the smooth L1 loss <span class="citation" data-cites="ErhanSTA13">(Erhan et al. 2013)</span> between the predicted box(<span class="math inline">\(l\)</span>) and the ground truth box(<span class="math inline">\(g\)</span>). We calculate the overall localization loss as:</p>
+<p><span class="math display">\[\begin{split}
+                L_{loc}(x,l,g,f) &amp;= \sum_{i \in POS} \text{ } \sum_{m \in \{cx, cy, w, h\}} (x^{p}_{ij} smooth_{L1}(f_m(l_{i})-\hat{g}^{m}_{j}))\\
+             \end{split}
+            \label{eq:localization_loss}\]</span></p>
+<p>where POS are positive examples and <span class="math inline">\(\mid POS \mid = N\)</span>. <span class="math inline">\(x\)</span> is the indicator function, <span class="math inline">\(l\)</span> is the predicted box, <span class="math inline">\(g\)</span> is the ground truth, and, <span class="math inline">\(f_i\)</span> is the set of bounding box correction functions. From Equation <a href="#eq:localization_loss" data-reference-type="ref" data-reference="eq:localization_loss">[eq:localization_loss]</a> we can see that the localization loss is calculated only for positive examples.</p>
+<h2 id="confidence-loss">Confidence Loss</h2>
+<p>The confidence loss is the cross entropy loss over multiple class confidences <span class="math inline">\((c)\)</span>. It is given by Equation <a href="#eq:ce_confidence_loss" data-reference-type="ref" data-reference="eq:ce_confidence_loss">[eq:ce_confidence_loss]</a>.</p>
+<p><span class="math display">\[\begin{split}
+                L_{conf}(x,c) &amp;= - \sum_{i \in POS}{x_{ij}^p}\log{\hat{c}_{i}^{p}} - \sum_{i \in NEG} \log(\hat{c}_i^{0})\\ 
+                \text{where,}\\ 
+                \hat{c}_i^{p} &amp;= exp(c_i^p) / \sum_k exp(c_i^k)
+            \end{split}
+            \label{eq:ce_confidence_loss}\]</span></p>
+<h2 id="overall-loss">Overall Loss</h2>
+<p>The overall objective loss function used in our model is given by Equation <a href="#eq:overall_loss" data-reference-type="ref" data-reference="eq:overall_loss">[eq:overall_loss]</a>:</p>
+<p><span class="math display">\[\begin{split}
+                L(x,c,l,g) = \frac{1}{N}(L_{conf}(x,c) + \alpha L_{loc}(x,l,g,f))
+            \end{split}
+        \label{eq:overall_loss}\]</span></p>
+<p>where N is the number of matched default boxes. If N is 0, the loss is set to 0. We set the weight term <span class="math inline">\(\alpha\)</span> to 1 like original SSD<span class="citation" data-cites="liu2016ssd">(Liu et al. 2016)</span>.</p>
+
+<h2>References</h2>
+    <div id="ref-liu2016ssd">
+    <p>Liu, Wei, Dragomir Anguelov, Dumitru Erhan, Christian Szegedy, Scott Reed, Cheng-Yang Fu, and Alexander C Berg. 2016. “Ssd: Single Shot Multibox Detector.” In <em>European Conference on Computer Vision</em>, 21–37. Springer.</p>
+    </div>
+    <div id="ref-girshick2015fast">
+    <p>Girshick, Ross. 2015. “Fast R-Cnn.” In <em>Proceedings of the Ieee International Conference on Computer Vision</em>, 1440–8.</p>
+    </div>
+    <div id="ref-ErhanSTA13">
+    <p>Erhan, Dumitru, Christian Szegedy, Alexander Toshev, and Dragomir Anguelov. 2013. “Scalable Object Detection Using Deep Neural Networks.” <em>CoRR</em> abs/1312.2249. <a href="http://arxiv.org/abs/1312.2249">http://arxiv.org/abs/1312.2249</a>.</p>
+    </div>
+</body>
+    
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+                <section class="subscribe-form">
+                    <h3 class="subscribe-form-title">Subscribe to Parag Mali</h3>
+                    <p>Get the latest posts delivered right to your inbox</p>
+                    <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  /><input class="location" type="hidden" name="location"  /><input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="email" name="email"  placeholder="youremail@example.com" />
+    </div>
+    <button class="" type="submit" disabled><span>Subscribe</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+                </section>
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/images/paragmali.jpg" alt="maliparag" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/maliparag">Parag Mali</a></h4>
+                                
+                                    <p>Parag Mali is a Software Engineer at Microsoft Corp. Worked at Apple Inc.</p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/maliparag">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'http://localhost:4000/';
+                            this.page.identifier = 'Parag Mali';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://paragmali.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="http://localhost:4000/">
+            
+                <img src="/assets/images/logo/vector/isolated-monochrome-black.svg" alt="Parag Mali icon" />
+            
+            <span>Parag Mali</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Bounding Box Regression</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Bounding+Box+Regression&amp;url=https://maliparag.github.io/bounding-box-regression"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://maliparag.github.io/bounding-box-regression"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="http://localhost:4000/">Parag Mali</a> &copy; 2019</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    <a href="https://facebook.com/prgml" target="_blank" rel="noopener">Facebook</a>
+                    <a href="https://twitter.com/paragmali" target="_blank" rel="noopener">Twitter</a>
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+        <div id="subscribe" class="subscribe-overlay">
+            <a class="subscribe-overlay-close" href="#"></a>
+            <div class="subscribe-overlay-content">
+                
+                    <img class="subscribe-overlay-logo" src="/assets/images/logo/profile.png" alt="Parag Mali" />
+                
+                <h1 class="subscribe-overlay-title">Subscribe to Parag Mali</h1>
+                <p class="subscribe-overlay-description">Stay up to date! Get all the latest &amp; greatest posts delivered straight to your inbox</p>
+                <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  /><input class="location" type="hidden" name="location"  /><input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="email" name="email"  placeholder="youremail@example.com" />
+    </div>
+    <button class="" type="submit" disabled><span>Subscribe</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+            </div>
+        </div>
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA--1', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

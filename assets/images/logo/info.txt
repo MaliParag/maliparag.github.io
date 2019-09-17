@@ -1,0 +1,14 @@
+
+Hope you enjoy your new logo, here are the people that
+made your beautiful logo happen :)
+font name: Heuristica-Regular
+font link: https://www.fontsquirrel.com/fonts/heuristica
+font author: Andrej Panov
+font author site: 
+
+
+icon designer: Sarah JOY
+icon designer link: /randompandadesign
+        
+{"bg-gradient-0":"#01648B","bg-gradient-1":"#5BD0A4","icon":"#ffffff","font":"#ffffff","slogan":"#ffffff"}
+      
